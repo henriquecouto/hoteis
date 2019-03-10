@@ -21,16 +21,32 @@ def getAllClientes(mongodb):
     return {'result': clientes}
 
 # Buscar Cliente
-@clientesApp.get('/<nome>')
-def getCliente(mongodb, nome):
-    query = mongodb['clientes'].find({'nome': {'$regex': f'^{nome}', '$options': 'i'}})
+@clientesApp.get('/nome/<nome>')
+def getClienteByNome(mongodb, nome):
+    query = mongodb['clientes'].find(
+        {'nome': {'$regex': f'^{nome}', '$options': 'i'}}
+    )
     clientes = json.loads(dumps(query))
 
     for cliente in clientes:
-        queryReservas = mongodb['reservas'].find({'cliente': cliente['codigo']})
+        queryReservas = mongodb['reservas'].find(
+            {'cliente': cliente['codigo']})
         cliente['reservas'] = json.loads(dumps(queryReservas))
 
     return{'result': clientes}
+
+
+@clientesApp.get('/codigo/<codigo>')
+def getClienteByCodigo(mongodb, codigo):
+    query = mongodb['clientes'].find_one({'codigo': int(codigo)})
+    cliente = json.loads(dumps(query))
+
+    queryReservas = mongodb['reservas'].find(
+        {'cliente': cliente['codigo']}
+    )
+    cliente['reservas'] = json.loads(dumps(queryReservas))
+
+    return {'results': cliente}
 
 # Cadastrar Cliente
 @clientesApp.post('/')
