@@ -1,7 +1,6 @@
 from bottle import Bottle, request, response
 from bson.json_util import dumps
 import json
-
 from database import db_plugin
 
 reservasApp = Bottle()
@@ -15,6 +14,11 @@ def createReserva(mongodb):
 
     if(quarto < 1 or quarto > 10):
         return {'result': 'Quarto não disponível'}
+    
+    queryCliente = mongodb['clientes'].find_one({'codigo': newReserva['cliente']})
+    cliente = json.loads(dumps(queryCliente))
+    if(cliente == None):
+        return{'result': 'Código de cliente não cadastrado'}
 
     query = mongodb['reservas'].find({'quarto': quarto})
 
