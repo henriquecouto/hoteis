@@ -7,7 +7,7 @@ reservasApp = Bottle()
 reservasApp.install(db_plugin)
 
 # Criando reserva
-@reservasApp.route('/', method='POST')
+@reservasApp.post('/')
 def createReserva(mongodb):
     newReserva = request.json
     quarto = newReserva ['quarto']
@@ -45,7 +45,7 @@ def createReserva(mongodb):
         return {'result': status}
 
 # Listar Reservas
-@reservasApp.route('/')
+@reservasApp.get('/')
 def getAllReservas(mongodb):
     query = mongodb['reservas'].find()
     reservas = dumps(query)

@@ -8,7 +8,7 @@ clientesApp.install(db_plugin)
 
 
 # Listar Clientes
-@clientesApp.route('/')
+@clientesApp.get('/')
 def getAllClientes(mongodb):
     query = mongodb['clientes'].find()
 
@@ -21,7 +21,7 @@ def getAllClientes(mongodb):
     return {'result': clientes}
 
 # Buscar Cliente
-@clientesApp.route('/<nome>')
+@clientesApp.get('/<nome>')
 def getCliente(mongodb, nome):
     query = mongodb['clientes'].find({'nome': {'$regex': f'^{nome}', '$options': 'i'}})
     clientes = json.loads(dumps(query))
@@ -33,7 +33,7 @@ def getCliente(mongodb, nome):
     return{'result': clientes}
 
 # Cadastrar Cliente
-@clientesApp.route('/', method='POST')
+@clientesApp.post('/')
 def addCliente(mongodb):
     newUser = request.json
     query = mongodb['clientes'].find_one({'codigo': newUser['codigo']})
@@ -50,7 +50,7 @@ def addCliente(mongodb):
         return {'result': 'Código de usuário não disponível'}
 
 # Alterar Cliente
-@clientesApp.route('/<codigo>', method='PUT')
+@clientesApp.put('/<codigo>')
 def changeCliente(mongodb, codigo):
     newUser = request.json
 
