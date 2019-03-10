@@ -1,0 +1,2 @@
+bottle==0.12.16
+bottle-mongo==0.3.0
