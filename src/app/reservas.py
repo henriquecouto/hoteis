@@ -11,7 +11,7 @@ reservasApp.install(db_plugin)
 @reservasApp.post('/')
 def createReserva(mongodb):
     newReserva = request.json
-    quarto = newReserva ['quarto']
+    quarto = newReserva['quarto']
 
     if(quarto < 1 or quarto > 10):
         return {'result': 'Quarto não disponível'}
