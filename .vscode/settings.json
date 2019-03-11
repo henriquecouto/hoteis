@@ -1,5 +1,5 @@
 {
-  "python.pythonPath": "C:\\Users\\User\\Anaconda3\\python.exe",
+  "python.pythonPath": "/usr/bin/python3",
   "editor.tabSize": 4,
   "python.linting.enabled": false
 }

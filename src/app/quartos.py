@@ -18,5 +18,15 @@ def getAllQuartos(mongodb):
         query = mongodb['reservas'].find({'quarto': quarto['numero']})
         quarto['reservas'] = json.loads(dumps(query))
 
-
     return {'result': quartos}
+
+# Listar Quarto pelo número
+@quartosApp.get('/<numero>')
+def getOneQuarto(mongodb, numero):
+    query = mongodb['quartos'].find_one({'numero': int(numero)})
+    quarto = json.loads(dumps(query))
+
+    queryReservas = mongodb['reservas'].find({'quarto': int(numero)})
+    quarto['reservas'] = json.loads(dumps(queryReservas))
+
+    return {'result': quarto}
