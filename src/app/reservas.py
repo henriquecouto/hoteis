@@ -1,5 +1,6 @@
 from bottle import Bottle, request, response
 from bson.json_util import dumps
+from bson.objectid import ObjectId
 import json
 from database import db_plugin
 
@@ -19,6 +20,12 @@ def createReserva(mongodb):
     cliente = json.loads(dumps(queryCliente))
     if(cliente == None):
         return{'result': 'Código de cliente não cadastrado'}
+
+    queryQuarto = mongodb['quartos'].find_one({'numero': quarto})
+    limite = json.loads(dumps(queryQuarto))['capacidade']
+    
+    if(limite<newReserva['hospedes']):
+        return {'result':'Capacidade excedida!!!'}
 
     query = mongodb['reservas'].find({'quarto': quarto})
 
@@ -50,3 +57,15 @@ def getAllReservas(mongodb):
     query = mongodb['reservas'].find()
     reservas = dumps(query)
     return {'result': json.loads(reservas)}
+
+#Cancelar reservas
+@reservasApp.delete('/')
+def deleteReserva(mongodb):
+    id = request.json['$oid']
+    
+    
+    try:
+        mongodb['reservas'].delete_one({'_id':ObjectId(id)})
+        return {'result':'Reserva Cancelada!!'}
+    except:
+        return {'result':'Erro ao Cancelar Reserva!!'}
