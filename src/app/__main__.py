@@ -13,7 +13,7 @@ root.mount('/clientes', clientesApp)
 root.mount('/quartos', quartosApp)
 
 # heroku
-root.run(server='gevent', port=os.environ.get('PORT', 5000))
+root.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
 
 # Local
 # root.run(host='localhost', port=8081, debug=True, reloader=True)
