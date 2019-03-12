@@ -12,7 +12,8 @@ root.mount('/reservas', reservasApp)
 root.mount('/clientes', clientesApp)
 root.mount('/quartos', quartosApp)
 
-if os.environ.get('APP_LOCATION') == 'heroku':
+    #heroku
     root.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
-else:
-    root.run(host='localhost', port=8080, debug=True, reloader=True)
+
+    #Local
+    # root.run(host='localhost', port=8081, debug=True, reloader=True)
