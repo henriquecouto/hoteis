@@ -95,7 +95,7 @@ def changeReservaStatus(mongodb):
             return {'result': False, 'message': 'A data de Check-Out não pode ser antes da data de Check-In'}
 
         adicional = 0
-        if(reserva['hospedes'] >= quarto['capacidade'] - 1):
+        if(reserva['hospedes'] > quarto['capacidade'] - 1):
             adicional = 30
 
         valor = ((alteracoes['saida'] - reserva['entrada'])*quarto['diaria'])
