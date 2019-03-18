@@ -85,8 +85,9 @@ def changeReservaStatus(mongodb):
     queryQuarto = mongodb['quartos'].find_one({'numero': reserva['quarto']})
     quarto = json.loads(dumps(queryQuarto))
 
-    if(alteracoes['status']=='Check-In' and alteracoes['hospedes'] > quarto['capacidade']):
-        return {'result': False, 'message': 'Capacidade Excedida'}        
+    if(alteracoes['status']=='Check-In'):
+        if (alteracoes['hospedes'] > quarto['capacidade']):
+            return {'result': False, 'message': 'Capacidade Excedida'}
 
     if(alteracoes['status'] == 'Check-Out'):
 
