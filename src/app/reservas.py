@@ -79,17 +79,26 @@ def changeReservaStatus(mongodb):
     alteracoes = request.json['alteracoes']
     reserva_id = ObjectId(request.json['_id'])
 
-    print(request.json)
+    queryReserva = mongodb['reservas'].find_one({'_id': reserva_id})
+    reserva = json.loads(dumps(queryReserva))
+
+    queryQuarto = mongodb['quartos'].find_one({'numero': reserva['quarto']})
+    quarto = json.loads(dumps(queryQuarto))
+
+    if(alteracoes['status']=='Check-In' and alteracoes['hospedes'] > quarto['capacidade']):
+        return {'result': False, 'message': 'Capacidade Excedida'}        
 
     if(alteracoes['status'] == 'Check-Out'):
-        queryReserva = mongodb['reservas'].find_one({'_id': reserva_id})
-        reserva = json.loads(dumps(queryReserva))
 
-        queryQuarto = mongodb['quartos'].find_one({'numero': reserva['quarto']})
-        quarto = json.loads(dumps(queryQuarto))
+        if(reserva['entrada'] > alteracoes['saida']):
+            return {'result': False, 'message': 'A data de Check-Out não pode ser antes da data de Check-In'}
 
-        valor = (alteracoes['saida'] - reserva['entrada'])*quarto['diaria']
-        alteracoes['valor'] = valor
+        adicional = 0
+        if(reserva['hospedes'] >= quarto['capacidade'] - 1):
+            adicional = 30
+
+        valor = ((alteracoes['saida'] - reserva['entrada'])*quarto['diaria'])
+        alteracoes['valor'] = valor + valor * (adicional/100)
 
     try:
         mongodb['reservas'].update_one(
