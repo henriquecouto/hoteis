@@ -89,7 +89,18 @@ def changeReservaStatus(mongodb):
         if (alteracoes['hospedes'] > quarto['capacidade']):
             return {'result': False, 'message': 'Capacidade Excedida'}
 
+        query = mongodb['reservas'].find({'quarto': reserva['quarto']})
+        allReservas = json.loads(dumps(query))
+        for r in allReservas:
+            if (str(r['_id']['$oid']) != str(reserva_id) and r['status']!='Check-Out'):
+                return {'result': False, 'message': 'Quarto Ocupado'}
+
+
+
     if(alteracoes['status'] == 'Check-Out'):
+
+        if(reserva['status'] == 'Aguardando'):
+            return {'result': False, 'message': 'Você deve fazer Check-In primeiro'}
 
         if(reserva['entrada'] > alteracoes['saida']):
             return {'result': False, 'message': 'A data de Check-Out não pode ser antes da data de Check-In'}
@@ -107,4 +118,4 @@ def changeReservaStatus(mongodb):
             {'$set': alteracoes})
         return {'result': True}
     except:
-        return {'result': False}
+        return {'result': False, 'message': 'Erro ao fazer'+alteracoes['status']}
