@@ -35,7 +35,7 @@ def createReserva(mongodb):
     disponivel = True
     status = 'Reserva Disponível'
 
-    if(newReserva['saida'] < newReserva['entrada']):
+    if(newReserva['saida'] <= newReserva['entrada']):
         return {'result': 'A data de entrada deve ser antes da data de saída'}
     else:
         for reserva in json.loads(reservas):
