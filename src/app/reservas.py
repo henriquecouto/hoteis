@@ -89,13 +89,11 @@ def changeReservaStatus(mongodb):
         if (alteracoes['hospedes'] > quarto['capacidade']):
             return {'result': False, 'message': 'Capacidade Excedida'}
 
-        query = mongodb['reservas'].find({'quarto': reserva['quarto']})
-        allReservas = json.loads(dumps(query))
-        for r in allReservas:
-            if (str(r['_id']['$oid']) != str(reserva_id) and r['status']!='Check-Out' and r['saida'] < reserva['entrada'] ):
-                return {'result': False, 'message': 'Quarto Ocupado'}
-
-
+        # query = mongodb['reservas'].find({'quarto': reserva['quarto']})
+        # allReservas = json.loads(dumps(query))
+        # for r in allReservas:
+        #     if (str(r['_id']['$oid']) != str(reserva_id) and r['status']!='Check-Out' and r['saida'] < reserva['entrada'] ):
+        #         return {'result': False, 'message': 'Quarto Ocupado'}
 
     if(alteracoes['status'] == 'Check-Out'):
 
