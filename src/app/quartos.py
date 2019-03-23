@@ -30,3 +30,11 @@ def getOneQuarto(mongodb, numero):
     quarto['reservas'] = json.loads(dumps(queryReservas))
 
     return {'result': quarto}
+
+# Número Quartos de Ocupados
+@quartosApp.get('/ocupados')
+def getOcupados(mongodb):
+    query = mongodb['reservas'].find({'status': 'Check-In'})
+    ocupados = len(json.loads(dumps(query)))
+
+    return {'result': ocupados}

@@ -3,9 +3,16 @@ from bson.json_util import dumps
 from bson.objectid import ObjectId
 import json
 from database import db_plugin
+from datetime import datetime
 
 reservasApp = Bottle()
 reservasApp.install(db_plugin)
+
+def subtrairDatas(dataStart, dataEnd):
+    d2 = datetime.strptime(dataEnd, '%Y-%m-%d')
+    d1 = datetime.strptime(dataStart, '%Y-%m-%d')
+    quantidade_dias = abs((d2 - d1).days)
+    return quantidade_dias
 
 # Criando reserva
 @reservasApp.post('/')
@@ -107,7 +114,13 @@ def changeReservaStatus(mongodb):
         if(reserva['hospedes'] > quarto['capacidade'] - 1):
             adicional = 30
 
-        valor = ((alteracoes['saida'] - reserva['entrada'])*quarto['diaria'])
+        de = str(reserva['entrada'])
+        de = de[0]+de[1]+de[2]+de[3]+'-'+de[4]+de[5]+'-'+de[6]+de[7]
+
+        ds = str(reserva['saida'])
+        ds = ds[0]+ds[1]+ds[2]+ds[3]+'-'+ds[4]+ds[5]+'-'+ds[6]+ds[7]
+
+        valor = (subtrairDatas(de, ds)*quarto['diaria'])
         alteracoes['valor'] = valor + valor * (adicional/100)
 
     try:
@@ -117,3 +130,19 @@ def changeReservaStatus(mongodb):
         return {'result': True}
     except:
         return {'result': False, 'message': 'Erro ao fazer'+alteracoes['status']}
+
+#Recebimento Mensal
+@reservasApp.get('/recebimento/<ano_mes>')
+def getRecebimento(mongodb, ano_mes):
+    start = int(ano_mes+'00')
+    end = int(ano_mes+'32')
+
+    query = mongodb['reservas'].find({'status': 'Check-Out', 'saida': {"$lt": end, "$gt": start}})
+    result = json.loads(dumps(query))
+
+    recebimento = 0
+    for r in result:
+        recebimento = recebimento + r['valor']
+
+
+    return {'result': recebimento}
