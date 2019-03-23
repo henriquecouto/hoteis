@@ -83,3 +83,18 @@ def changeCliente(mongodb, codigo):
         mongodb['clientes'].update_one(
             {'codigo': int(codigo)}, {"$set": newUser})
         return {'result': 'Usuário atualizado'}
+
+# Clientes mensais
+@clientesApp.get('/mensal/<ano_mes>')
+def getClientesMes(mongodb, ano_mes):
+    start = int(ano_mes+'00')
+    end = int(ano_mes+'32')
+
+    query = mongodb['reservas'].find({'status': 'Check-Out', 'saida': {"$lt": end, "$gt": start}})
+    result = json.loads(dumps(query))
+
+    hospedes = 0
+    for r in result:
+        hospedes = hospedes + r['hospedes']
+    
+    return {'result': hospedes}

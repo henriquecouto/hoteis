@@ -144,5 +144,22 @@ def getRecebimento(mongodb, ano_mes):
     for r in result:
         recebimento = recebimento + r['valor']
 
-
     return {'result': recebimento}
+
+#Reservas Diárias
+@reservasApp.get('/day/<date>')
+def getRecebimento(mongodb, date):
+    query = mongodb['reservas'].find({'status': 'Aguardando', 'entrada': int(date)})
+    result = json.loads(dumps(query))
+    return {'result': result}
+
+#Recebimento Mensal
+@reservasApp.get('/month/<ano_mes>')
+def getRecebimento(mongodb, ano_mes):
+    start = int(ano_mes+'00')
+    end = int(ano_mes+'32')
+
+    query = mongodb['reservas'].find({'saida': {"$lt": end, "$gt": start}})
+    result = json.loads(dumps(query))
+
+    return {'result': result}
