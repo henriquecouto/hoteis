@@ -53,3 +53,15 @@ def searchQuartos(mongodb, search):
         qrt['reservas'] = json.loads(dumps(queryRes))
 
     return {'result': qrts}
+
+# Tá ocupado?
+@quartosApp.get('/ocupado/<number>')
+def isOcuped(mongodb, number):
+    result = 'Não'
+
+    query = mongodb['reservas'].find_one({'quarto': int(number), 'status': 'Check-In'})
+    reserva = json.loads(dumps(query))
+    if reserva:
+        result = 'Sim'
+
+    return {'result': result}
