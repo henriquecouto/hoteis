@@ -6,7 +6,6 @@ from database import db_plugin
 quartosApp = Bottle()
 quartosApp.install(db_plugin)
 
-
 # Listar Quartos
 @quartosApp.get('/')
 def getAllQuartos(mongodb):
@@ -38,3 +37,19 @@ def getOcupados(mongodb):
     ocupados = len(json.loads(dumps(query)))
 
     return {'result': ocupados}
+
+# Buscar Quartos
+@quartosApp.get('/search/<search>')
+def searchQuartos(mongodb, search):
+    if search.isdigit():
+        query = mongodb['quartos'].find({'numero': int(search)})
+    else:
+        query = mongodb['quartos'].find({'tipo': {'$regex': f'^{search}', '$options': 'i'}})
+    
+    qrts = json.loads(dumps(query))
+
+    for qrt in qrts:
+        queryRes = mongodb['reservas'].find({'quarto': int(qrt['numero'])})
+        qrt['reservas'] = json.loads(dumps(queryRes))
+
+    return {'result': qrts}
